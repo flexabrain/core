@@ -1,0 +1,40 @@
+{
+  "name": "@flexabrain/core",
+  "version": "3.0.0",
+  "description": "Self-hosted AI platform with specialized agents - Intelligence Without Limits",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/flexabrain/core.git"
+  },
+  "keywords": [
+    "ai",
+    "self-hosted",
+    "enterprise",
+    "agents",
+    "typescript",
+    "llm",
+    "intelligence"
+  ],
+  "author": "Shawn Sonnier <your-email@flexabrain.com>",
+  "license": "MIT",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "test": "jest",
+    "lint": "eslint . --ext .ts,.tsx",
+    "setup": "node scripts/setup.js"
+  },
+  "dependencies": {
+    "next": "^14.0.0",
+    "react": "^18.0.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
+
+
