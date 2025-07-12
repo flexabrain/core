@@ -3,10 +3,45 @@
   "version": "3.0.0",
   "description": "Self-hosted AI platform with specialized agents - Intelligence Without Limits",
   "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/flexabrain/core.git"
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "test": "jest --passWithNoTests",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit",
+    "docker:dev": "docker-compose up -d",
+    "docker:prod": "docker-compose -f docker-compose.prod.yml up -d",
+    "docker:down": "docker-compose down",
+    "docker:build": "docker build -t flexabrain/core:latest .",
+    "ai:pull": "docker-compose exec ollama ollama pull mistral:7b-instruct && docker-compose exec ollama ollama pull llama2:7b-chat && docker-compose exec ollama ollama pull codellama:7b-instruct",
+    "ai:status": "docker-compose exec ollama ollama list",
+    "logs": "docker-compose logs -f",
+    "health": "curl -f http://localhost:3000/api/health || echo 'Service not ready'",
+    "setup": "chmod +x scripts/setup.sh && ./scripts/setup.sh",
+    "clean": "rm -rf .next node_modules dist",
+    "reset": "npm run clean && npm install"
+  },
+  "dependencies": {
+    "next": "^14.2.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "typescript": "^5.3.3",
+    "tailwindcss": "^3.4.0",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.32",
+    "lucide-react": "^0.300.0",
+    "clsx": "^2.0.0",
+    "class-variance-authority": "^0.7.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/react": "^18.2.45",
+    "@types/react-dom": "^18.2.18",
+    "eslint": "^8.56.0",
+    "eslint-config-next": "^14.2.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0"
   },
   "keywords": [
     "ai",
@@ -14,27 +49,11 @@
     "enterprise",
     "agents",
     "typescript",
-    "llm",
-    "intelligence"
+    "nextjs"
   ],
-  "author": "Shawn Sonnier <your-email@flexabrain.com>",
+  "author": "Shawn Sonnier <shawn@flexabrain.com>",
   "license": "MIT",
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "test": "jest",
-    "lint": "eslint . --ext .ts,.tsx",
-    "setup": "node scripts/setup.js"
-  },
-  "dependencies": {
-    "next": "^14.0.0",
-    "react": "^18.0.0",
-    "typescript": "^5.0.0"
-  },
   "engines": {
     "node": ">=18.0.0"
   }
 }
-
-
