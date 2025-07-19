@@ -1,0 +1,50 @@
+{
+  "name": "flexabrain-empire",
+  "version": "1.0.0",
+  "description": "Intelligence Without Limits. Domination Without Compromise.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:oracle\" \"npm run dev:sentinel\" \"npm run dev:sage\"",
+    "dev:oracle": "cd oracle-sales-api && npm run dev",
+    "dev:sentinel": "cd sentinel-monitoring-api && npm run dev", 
+    "dev:sage": "cd sage-analytics-api && npm run dev",
+    "build": "npm run build:oracle && npm run build:sentinel && npm run build:sage",
+    "build:oracle": "cd oracle-sales-api && npm run build",
+    "build:sentinel": "cd sentinel-monitoring-api && npm run build",
+    "build:sage": "cd sage-analytics-api && npm run build",
+    "test": "npm run test:oracle && npm run test:sentinel && npm run test:sage",
+    "test:oracle": "cd oracle-sales-api && npm test",
+    "test:sentinel": "cd sentinel-monitoring-api && npm test",
+    "test:sage": "cd sage-analytics-api && npm test",
+    "docker:build": "docker-compose build",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "setup": "npm install && npm run setup:apis && npm run setup:n8n",
+    "setup:apis": "cd oracle-sales-api && npm install && cd ../sentinel-monitoring-api && npm install && cd ../sage-analytics-api && npm install",
+    "setup:n8n": "cd n8n-nodes && npm install"
+  },
+  "keywords": [
+    "ai",
+    "automation",
+    "n8n", 
+    "self-hosted",
+    "enterprise",
+    "business-intelligence",
+    "sales-intelligence",
+    "monitoring",
+    "analytics"
+  ],
+  "author": "FlexaBrain Empire",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.0",
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/flexabrain-empire.git"
+  }
+}

@@ -1,0 +1,130 @@
+version: '3.8'
+
+services:
+  # PostgreSQL database for all agents
+  postgres:
+    image: postgres:15-alpine
+    container_name: flexabrain-postgres
+    environment:
+      POSTGRES_DB: flexabrain
+      POSTGRES_USER: flexabrain
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-flexabrain_secure_2024}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init:/docker-entrypoint-initdb.d
+    networks:
+      - flexabrain-network
+
+  # Redis for caching and session management
+  redis:
+    image: redis:7-alpine
+    container_name: flexabrain-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - flexabrain-network
+
+  # Oracle Sales API
+  oracle-sales-api:
+    build:
+      context: ./oracle-sales-api
+      dockerfile: Dockerfile
+    container_name: flexabrain-oracle
+    environment:
+      - NODE_ENV=${NODE_ENV:-development}
+      - DATABASE_URL=postgresql://flexabrain:${DB_PASSWORD:-flexabrain_secure_2024}@postgres:5432/flexabrain
+      - REDIS_URL=redis://redis:6379
+      - OLLAMA_URL=${OLLAMA_URL:-http://host.docker.internal:11434}
+    ports:
+      - "3001:3000"
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - flexabrain-network
+    volumes:
+      - ./oracle-sales-api:/app
+      - /app/node_modules
+
+  # Sentinel Monitoring API
+  sentinel-monitoring-api:
+    build:
+      context: ./sentinel-monitoring-api
+      dockerfile: Dockerfile
+    container_name: flexabrain-sentinel
+    environment:
+      - NODE_ENV=${NODE_ENV:-development}
+      - DATABASE_URL=postgresql://flexabrain:${DB_PASSWORD:-flexabrain_secure_2024}@postgres:5432/flexabrain
+      - REDIS_URL=redis://redis:6379
+      - OLLAMA_URL=${OLLAMA_URL:-http://host.docker.internal:11434}
+    ports:
+      - "3002:3000"
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - flexabrain-network
+    volumes:
+      - ./sentinel-monitoring-api:/app
+      - /app/node_modules
+
+  # Sage Analytics API
+  sage-analytics-api:
+    build:
+      context: ./sage-analytics-api
+      dockerfile: Dockerfile
+    container_name: flexabrain-sage
+    environment:
+      - NODE_ENV=${NODE_ENV:-development}
+      - DATABASE_URL=postgresql://flexabrain:${DB_PASSWORD:-flexabrain_secure_2024}@postgres:5432/flexabrain
+      - REDIS_URL=redis://redis:6379
+      - OLLAMA_URL=${OLLAMA_URL:-http://host.docker.internal:11434}
+    ports:
+      - "3003:3000"
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - flexabrain-network
+    volumes:
+      - ./sage-analytics-api:/app
+      - /app/node_modules
+
+  # n8n workflow automation platform
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: flexabrain-n8n
+    environment:
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=postgres
+      - DB_POSTGRESDB_PORT=5432
+      - DB_POSTGRESDB_DATABASE=flexabrain
+      - DB_POSTGRESDB_USER=flexabrain
+      - DB_POSTGRESDB_PASSWORD=${DB_PASSWORD:-flexabrain_secure_2024}
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=${N8N_USER:-admin}
+      - N8N_BASIC_AUTH_PASSWORD=${N8N_PASSWORD:-FlexaBrain2024!}
+      - WEBHOOK_URL=http://localhost:5678
+      - GENERIC_TIMEZONE=${TZ:-America/New_York}
+    ports:
+      - "5678:5678"
+    depends_on:
+      - postgres
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - ./n8n-nodes:/opt/n8n-nodes
+    networks:
+      - flexabrain-network
+
+volumes:
+  postgres_data:
+  redis_data:
+  n8n_data:
+
+networks:
+  flexabrain-network:
+    driver: bridge
